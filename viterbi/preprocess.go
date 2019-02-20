@@ -6,34 +6,52 @@ import (
     "log"
 )
 
-func LoadData(path string) [][][]rune {
+type corpus struct {
+    total float64
+    words map[string]int
+    maxlen int
+}
+
+func LoadData(path string) *corpus {
     content, err := ioutil.ReadFile(path)
     if err != nil {
         log.Fatal(err)
     }
 
-    lines := [][][]rune{}
+    words := []string{}
     split := strings.Split(string(content), "\n")
 
     for i := range split {
         tokens := strings.Split(split[i], "  ")
-        lines = append(lines, [][]rune{})
 
         for j := range tokens {
-            lines[i] = append(lines[i], []rune(tokens[j]))
+            words = append(words, tokens[j])
         }
     }
-    return lines
+
+    c := &corpus{}
+    c.buildProb(words)
+
+    return c
 }
 
-func BuildDict(data [][][]rune) map[rune]bool {
-    dict := map[rune]bool{}
+func (c *corpus) buildProb(data []string) {
+    maxlen := 0
+    dict := map[string]int{}
+    total := 0
     for i  := range data {
-        for j := range data[i] {
-            for k := range data[i][j] {
-                dict[data[i][j][k]] = true
-            }
+        l := len([]rune(data[i]))
+        if l > maxlen {
+            maxlen = l
         }
+        dict[data[i]] += 1
+        total += 1
     }
-    return dict
+
+    c.total = float64(total)
+    c.words = dict
+    c.maxlen = maxlen
+
 }
+
+
