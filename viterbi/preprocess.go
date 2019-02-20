@@ -12,7 +12,14 @@ type corpus struct {
     maxlen int
 }
 
-func LoadData(path string) *corpus {
+// Init creates a new corpus object
+func Init() *corpus {
+    c := &corpus{}
+    return c
+}
+
+// LoadData loads data from the given path and builds probability
+func (c *corpus) LoadData(path string) {
     content, err := ioutil.ReadFile(path)
     if err != nil {
         log.Fatal(err)
@@ -29,10 +36,7 @@ func LoadData(path string) *corpus {
         }
     }
 
-    c := &corpus{}
     c.buildProb(words)
-
-    return c
 }
 
 // buildProb records the count of each word to be used as probability

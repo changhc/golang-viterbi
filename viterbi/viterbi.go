@@ -1,7 +1,7 @@
 package viterbi
 
 type prob struct {
-    pr float64      // probability
+    val float64     // probability
     k int           // index
 }
 
@@ -20,8 +20,8 @@ func maxProb(y []*prob) (float64, int) {
         k int
     )
     for _, z := range y {
-        if z.pr > pr {
-            pr = z.pr
+        if z.val > pr {
+            pr = z.val
             k = z.k
         }
     }
@@ -56,7 +56,7 @@ func (c *corpus) Predict(s string) []string {
         // (those word segments never exist in training data)
         for j := max(0, i - c.maxlen); j < i; j++ {
             // prb of this segmentation = Pr(seg[:j]) * Pr(seg[j:i])
-            p := &prob{pr: T1[j] * c.wordProb(s[j:i]), k: j}
+            p := &prob{val: T1[j] * c.wordProb(s[j:i]), k: j}
             y = append(y, p)
         }
 
