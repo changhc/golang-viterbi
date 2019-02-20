@@ -40,7 +40,7 @@ func (c *corpus) buildProb(data []string) {
     dict := map[string]int{}
     total := 0
     for i  := range data {
-        l := len([]rune(data[i]))
+        l := len(data[i])
         if l > maxlen {
             maxlen = l
         }

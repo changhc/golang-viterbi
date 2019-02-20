@@ -13,17 +13,19 @@ func max(a, b int) int {
     return b
 }
 
-func maxProb(y []*prob) *prob {
-    pr := &prob{}
-
+func maxProb(y []*prob) (float64, int) {
+    var (
+        pr float64
+        k int
+    )
     for _, z := range y {
-        if z.pr > pr.pr {
-            pr.pr = z.pr
-            pr.k = z.k
+        if z.pr > pr {
+            pr = z.pr
+            k = z.k
         }
     }
 
-    return pr
+    return pr, k
 }
 
 func reverse(s []string) []string {
@@ -38,26 +40,27 @@ func (c *corpus) wordProb(w string) float64 {
 }
 
 func (c *corpus) Predict(s string) []string {
-    init := &prob{pr: 1.0, k: 0}
-    T := []*prob{init}
+    T1 := []float64{1.0}
+    T2 := []int{0}
 
     for i := 1; i < len(s) + 1; i++ {
         y := []*prob{}
         for j := max(0, i - c.maxlen); j < i; j++ {
-            p := &prob{pr: T[j].pr * c.wordProb(s[j:i]), k: j}
+            p := &prob{pr: T1[j] * c.wordProb(s[j:i]), k: j}
             y = append(y, p)
         }
 
-        pr := maxProb(y)
-        T = append(T, pr)
+        pr, k := maxProb(y)
+        T1 = append(T1, pr)
+        T2 = append(T2, k)
     }
 
     words := []string{}
     i := len(s)
 
     for i > 0 {
-        words = append(words, s[T[i].k:i])
-        i = T[i].k
+        words = append(words, s[T2[i]:i])
+        i = T2[i]
     }
 
     return reverse(words)
