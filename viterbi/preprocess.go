@@ -35,6 +35,7 @@ func LoadData(path string) *corpus {
     return c
 }
 
+// buildProb records the count of each word to be used as probability
 func (c *corpus) buildProb(data []string) {
     maxlen := 0
     dict := map[string]int{}
@@ -51,7 +52,6 @@ func (c *corpus) buildProb(data []string) {
     c.total = float64(total)
     c.words = dict
     c.maxlen = maxlen
-
 }
 
 
