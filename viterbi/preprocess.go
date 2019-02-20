@@ -2,8 +2,10 @@ package viterbi
 
 import (
     "strings"
-    "io/ioutil"
+    "bufio"
     "log"
+    "os"
+    "strconv"
 )
 
 type corpus struct {
@@ -20,26 +22,64 @@ func Init() *corpus {
 
 // LoadData loads data from the given path and builds probability
 func (c *corpus) LoadData(path string) {
-    content, err := ioutil.ReadFile(path)
+    file, err := os.Open(path)
     if err != nil {
         log.Fatal(err)
     }
 
+    defer file.Close()
     words := []string{}
-    split := strings.Split(string(content), "\n")
-
-    for i := range split {
-        tokens := strings.Split(split[i], "  ")
+    scanner := bufio.NewScanner(file)
+    for scanner.Scan() {
+        tokens := strings.Split(strings.Trim(scanner.Text(), "\n"), "  ")
 
         for j := range tokens {
             words = append(words, tokens[j])
         }
     }
+    if err := scanner.Err(); err != nil {
+        log.Fatal(err)
+    }
 
     c.buildProb(words)
 }
 
-// buildProb records the count of each word to be used as probability
+// LoadDict loads customized dictionary from file
+func (c *corpus) LoadDict(path string) {
+    file, err := os.Open(path)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    defer file.Close()
+
+    scanner := bufio.NewScanner(file)
+    for scanner.Scan() {
+        count := 1000
+        tokens := strings.Split(strings.Trim(scanner.Text(), "\n"), " ")
+        if len(tokens) < 1 {
+            continue
+        }
+
+        word := tokens[0]
+        if len(tokens) == 2 {
+            if c, err := strconv.Atoi(tokens[1]); err == nil {
+                count = c
+            }
+        }
+        c.words[word] += count
+        c.total += float64(count)
+        if len(word) > c.maxlen {
+            c.maxlen = len(word)
+        }
+    }
+
+    if err := scanner.Err(); err != nil {
+        log.Fatal(err)
+    }
+}
+
+// buildPror records the count of each word to be used as probability
 func (c *corpus) buildProb(data []string) {
     maxlen := 0
     dict := map[string]int{}
