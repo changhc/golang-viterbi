@@ -31,7 +31,7 @@ func (c *corpus) LoadData(path string) {
     words := []string{}
     scanner := bufio.NewScanner(file)
     for scanner.Scan() {
-        tokens := strings.Split(strings.Trim(scanner.Text(), "\n"), "  ")
+        tokens := strings.Split(strings.Trim(scanner.Text(), "\n"), " ")
 
         for j := range tokens {
             words = append(words, tokens[j])

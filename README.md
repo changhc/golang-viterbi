@@ -5,7 +5,7 @@ This repo implements the [Viterbi algorithm](https://en.wikipedia.org/wiki/Viter
 ### Data
 Using the training data for the [First International Chinese Word Segmentation Bakeoff](http://sighan.cs.uchicago.edu/bakeoff2003/) released by [SIGHAN](http://sighan.cs.uchicago.edu/).
 
-Though tested with Chinese corpus, the program should work for all languages.
+Though tested with Chinese corpus, the program should work for all languages. Please note that all words in the training set should be separated by a single white space character.
 
 It also supports dictionaries for custom phrases with format `(phrase count)`. Count is optional, and will be filled with 1000 if not provided.
 
